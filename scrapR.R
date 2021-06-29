@@ -32,7 +32,7 @@ name <- "#bbnreunion"
 now <- Sys.time() + 60 #* 5
 
 #set data name
-dataname <- gsub(":", "-",paste("data/","uber", as.character(Sys.time()), ".csv", sep = ""))
+dataname <- gsub(":", "-",paste("data/","bbnreunion ", as.character(Sys.time()), ".csv", sep = ""))
 
 
 #stream in tweets
