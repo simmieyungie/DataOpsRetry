@@ -69,7 +69,7 @@ users(df$tweet) %>%
   mutate(date = Sys.Date()) %>%
   write.table(.,
               "Analysisdata/TopHandles.csv", sep = ",",
-              col.names = !file.exists("TopHandles.csv"),
+              col.names = !file.exists("Analysisdata/TopHandles.csv"),
               append = T, row.names = F)
 
 
@@ -88,7 +88,7 @@ df %>%
   mutate(date = Sys.Date()) %>%
   write.table(.,"Analysisdata/TopWords.csv",
               sep = ",",
-              col.names = !file.exists("TopWords.csv"),
+              col.names = !file.exists("Analysisdata/TopWords.csv"),
               append = T, row.names = F)
 
 
@@ -112,7 +112,7 @@ df %>%
   mutate(date = Sys.Date()) %>%
   write.table(.,"Analysisdata/Reactions.csv",
               sep = ",",
-              col.names = !file.exists("Reactions.csv"),
+              col.names = !file.exists("Analysisdata/Reactions.csv"),
               append = T, row.names = F)
 
 
@@ -126,7 +126,7 @@ df %>%
   count() %>%
   write.table(.,"Analysisdata/dailytrend.csv",
               sep = ",",
-              col.names = !file.exists("dailytrend.csv"),
+              col.names = !file.exists("Analysisdata/dailytrend.csv"),
               append = T, row.names = F)
 
 
