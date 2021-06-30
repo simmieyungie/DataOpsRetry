@@ -1,0 +1,209 @@
+---
+title: "Analysis"
+author: "Future of Work"
+date: "5/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo = FALSE}
+#Load in required libraries
+library(tidyverse)
+library(tidytext)
+library(reshape2)
+library(stringi)
+library(stringi)
+library(rmarkdown)
+library(knitr)
+library(eeptools)
+library(lubridate)
+```
+
+## R Markdown
+
+This file is geared towards automating **The Future of Work** Analytical processes. The Analytics is usually divided into four aspects.
+
+* General Overview
+* Handles Analysis (For New tweets)
+* Keywords Analysis (For Insights)
+* Feature Contestants (For shows and the rest)
+
+We will Start by ensuring the files are read in from the **DATA** Folder in the working directory
+```{r}
+#Load all files and rbind
+files = list.files(paste(getwd(), "/data", sep = ""), pattern=".csv", full.names=T)
+
+# files[1]
+# str_detect(files[1], as.character(Sys.Date()))
+# 
+# strsplit(files[1], split = " ")
+
+#Loop over each file, read and rbind each of them
+files_n <- c()
+
+
+#iterate to fetch all files made today
+for (i in 1:length(files)){
+  if (str_detect(files[i], as.character(Sys.Date())) == FALSE){
+    files_n[i] = files[i]
+  }
+}
+
+
+df <- do.call("rbind",lapply(files_n, read.csv))
+
+
+```
+Once the Data has been read in from all the **DATA** Directory, we can then proceed to start preliminary Analysis of **General Overview**.
+
+
+
+```{r echo=FALSE}
+#Get the distinct tweets
+df <- df %>% 
+  rename(tweet = text) %>% 
+  distinct(tweet, .keep_all = T) #This is to remove all duplicate tweets
+```
+
+
+## General Overview
+
+```{r}
+#Regular expression (Regex) function for extracting handles mentioned
+users <- function(x, ...){
+  xx <- strsplit(x, " ")
+  lapply(xx, function(xx)xx[grepl("@[[:alnum:]]", xx)])
+}
+#Most mention words
+removeURL2 <- function(x) gsub("([[:alpha:]])(?=\\1)", "", x, perl = TRUE)
+removeNumPunct <- function(x) gsub("[^[:alpha:][:space:]]*", "", x)
+
+
+#Extract the most mentioned handles
+users(df$tweet) %>% 
+  unlist() %>%
+  tolower() %>% 
+  as_tibble() %>% 
+  count(value, sort = T) %>% 
+  top_n(30) %>% 
+  mutate(date = Sys.Date()) %>% 
+    write.table(.,
+              "Analysisdata/TopHandles.csv", sep = ",",
+              col.names = !file.exists("TopHandles.csv"),
+              append = T, row.names = F)
+```
+
+We need to get the most mentioned words in the tweets
+```{r}
+#Most mention words
+df %>% 
+  mutate(text = tolower(tweet)) %>% 
+  #mutate(text = removeURL2(text)) %>% 
+  mutate(text = removeNumPunct(text)) %>% 
+  mutate(text = gsub("brt", "", text)) %>% 
+  mutate(text = gsub("nultimateloveng", "ultimateloveng", text)) %>% 
+  mutate(text = gsub("bultimateloveng", "ultimateloveng", text)) %>%
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  count(word, sort = T) %>% 
+  slice_max(order_by = n, n = 30) %>% 
+  mutate(date = Sys.Date()) %>% 
+  write.table(.,"Analysisdata/TopWords.csv", 
+              sep = ",",
+              col.names = !file.exists("TopWords.csv"),
+              append = T, row.names = F)
+
+```
+
+The NRC sentiments which show different reactions will be extracted for the whole tweets
+```{r}
+#Reactions on comments
+df %>% 
+  mutate(text = tolower(tweet)) %>% 
+  mutate(text = removeURL2(text)) %>% 
+
+  mutate(text = gsub("brt", "", text)) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  inner_join(get_sentiments("nrc")) %>% 
+  count(word, sentiment, sort = T) %>% 
+  distinct(word, .keep_all = T) %>% 
+  ungroup() %>% 
+  group_by(sentiment) %>% 
+  summarise(n = sum(n)) %>% 
+  mutate(date = Sys.Date()) %>% 
+  write.table(.,"Analysisdata/Reactions.csv", 
+              sep = ",",
+              col.names = !file.exists("Reactions.csv"),
+              append = T, row.names = F)
+
+```
+
+Getting the daily tweets trend by time; 
+```{r}
+#Find general daily trend
+  df %>% 
+    separate(created, into = c("date", "time"), sep = " ") %>% 
+    mutate(date = ymd(date)) %>% 
+    mutate(hr = hour(hms(time))) %>% 
+    mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
+    group_by(date) %>%
+    count() %>%
+  write.table(.,"Analysisdata/dailytrend.csv", 
+              sep = ",",
+              col.names = !file.exists("dailytrend.csv"),
+              append = T, row.names = F)
+```
+
+<!-- Getting the hourly trend to see which time of the day people tweeted the most; -->
+<!-- ```{r} -->
+<!-- #Find hrly trend -->
+<!-- #am pm  -->
+<!-- df %>%  -->
+<!--     separate(date, into = c("date", "time"), sep = " ") %>%  -->
+<!--     mutate(date = ymd(date)) %>%  -->
+<!--     mutate(hr = hour(hms(time))) %>%  -->
+<!--     mutate(tm = ifelse(hr < 12, "am", "pm")) %>% -->
+<!--     unite(time, hr, tm, sep = " ") %>%  -->
+<!--   group_by(time) %>%  -->
+<!--   count() %>%  -->
+<!--     write.csv("Analysis Files\\hr_trend.csv") -->
+
+<!-- ``` -->
+
+<!-- Getting the day of the week people tweeted the most; -->
+<!-- ```{r} -->
+<!-- #Week day trend -->
+<!-- df %>%  -->
+<!-- separate(date, into = c("date", "time"), sep = " ") %>%  -->
+<!--   mutate(date = ymd(date)) %>%  -->
+<!--   mutate(day = weekdays(date)) %>%  -->
+<!--   group_by( day) %>%  -->
+<!--   count() %>% -->
+<!--   write.csv("Analysis Files\\day_tweets.csv") -->
+<!-- ``` -->
+<!-- Getting the overall bing trend for all tweets; -->
+<!-- ```{r} -->
+<!-- #Overall bing trend  -->
+<!-- df %>% -->
+<!--   mutate(tweet = removeURL2(tweet)) %>%  -->
+<!--   mutate(tweet = removeNumPunct(tweet)) %>%  -->
+<!--   mutate(tweet = tolower(tweet)) %>%  -->
+<!--   mutate(tweet = gsub("wil", "", tweet)) %>%  -->
+<!--   mutate(tweet = gsub("ben", "", tweet)) %>%  -->
+<!--   mutate(tweet = gsub("al", "", tweet)) %>%  -->
+<!--   mutate(tweet = gsub("ned", "", tweet)) %>%  -->
+<!--   unnest_tokens(word, tweet) %>%  -->
+<!--   anti_join(stop_words) %>%  -->
+<!--   inner_join(get_sentiments("bing")) %>%  -->
+<!--   separate(date, into = c("date", "time"), sep = " ") %>%  -->
+<!--   group_by(sentiment, date) %>%  -->
+<!--   count() %>% -->
+<!--   write.csv("Analysis Files\\bing_trend.csv") -->
+
+<!-- ``` -->
+
+
