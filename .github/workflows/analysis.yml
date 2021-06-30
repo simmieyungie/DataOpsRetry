@@ -23,7 +23,7 @@ jobs:
     # Set-up R
     - name: Install packages
       run: |
-        R -e 'install.packages(c("tidyverse", "tidytext", "lubridate", "rmarkdown", "textdata"))'
+        R -e 'install.packages(c("tidyverse", "tidytext", "lubridate", "rmarkdown"))'
     # Run R script
     - name: AnalysisScript
       run: Rscript Analysis.R

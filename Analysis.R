@@ -11,7 +11,7 @@ library(tidytext)
 # library(knitr)
 # library(eeptools)
 library(lubridate)
-library(textdata)
+#library(textdata)
 
 
 #Load all files and rbind
