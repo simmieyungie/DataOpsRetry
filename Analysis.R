@@ -14,7 +14,9 @@ library(lubridate)
 
 
 #Load all files and rbind
+#Load all files and rbind
 files = list.files(paste(getwd(), "/data", sep = ""), pattern=".csv", full.names=T)
+files
 
 # files[1]
 # str_detect(files[1], as.character(Sys.Date()))
@@ -27,13 +29,17 @@ files_n <- c()
 
 #iterate to fetch all files made today
 for (i in 1:length(files)){
-  if (str_detect(files[i], as.character(Sys.Date())) == FALSE){
+  if (str_detect(files[i], as.character(Sys.Date())) == TRUE){
     files_n[i] = files[i]
   }
 }
 
+#drop nas
+a <- na.omit(files_n) %>%
+  as.vector()
 
-df <- do.call("rbind",lapply(files_n, read.csv))
+
+df <- do.call("rbind",lapply(a, read.csv))
 
 
 #Get the distinct tweets
