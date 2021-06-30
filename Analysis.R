@@ -11,6 +11,7 @@ library(tidytext)
 # library(knitr)
 # library(eeptools)
 library(lubridate)
+library(textdata)
 
 
 #Load all files and rbind
@@ -91,15 +92,18 @@ df %>%
               append = T, row.names = F)
 
 
+#read nrc
+nrc <- read.csv("data/nrc.csv") %>%
+  select(3:4)
+#rm(nrc)
 #Reactions on comments
 df %>%
   mutate(text = tolower(tweet)) %>%
   mutate(text = removeURL2(text)) %>%
-
   mutate(text = gsub("brt", "", text)) %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words) %>%
-  inner_join(get_sentiments("nrc")) %>%
+  inner_join(nrc) %>%
   count(word, sentiment, sort = T) %>%
   distinct(word, .keep_all = T) %>%
   ungroup() %>%
