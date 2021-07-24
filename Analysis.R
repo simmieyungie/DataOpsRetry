@@ -96,7 +96,7 @@ df %>%
 
 
 #read nrc
-nrc <- read.csv("data/nrc.csv") %>%
+nrc <- read.csv("nrc/nrc.csv") %>%
   select(3:4)
 #rm(nrc)
 #Reactions on comments
