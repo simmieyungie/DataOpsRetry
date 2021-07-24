@@ -19,7 +19,7 @@ setup_twitter_oauth(consumerKey,consumerSecret,accessToken,accessTokenSecret)
 
 
 #demo data
-name <- "#bbnreunion"
+name <- "#bbnaija"
 
 #scrape
 # bbn <- searchTwitter(name, n = 1000,
@@ -32,7 +32,7 @@ name <- "#bbnreunion"
 now <- Sys.time() + 60 #* 5
 
 #set data name
-dataname <- gsub(":", "-",paste("data/","bbnreunion ", as.character(Sys.time()), ".csv", sep = ""))
+dataname <- gsub(":", "-",paste("data/","bbnaija ", as.character(Sys.time()), ".csv", sep = ""))
 
 
 ###stream in tweets
