@@ -30,7 +30,7 @@ files_n <- c()
 
 #iterate to fetch all files made today
 for (i in 1:length(files)){
-  if (str_detect(files[i], as.character(Sys.Date())) == F){
+  if (str_detect(files[i], as.character(Sys.Date())) == T){
     files_n[i] = files[i]
   }
 }
