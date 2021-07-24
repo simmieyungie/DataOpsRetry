@@ -35,7 +35,7 @@ now <- Sys.time() + 60 #* 5
 dataname <- gsub(":", "-",paste("data/","bbnreunion ", as.character(Sys.time()), ".csv", sep = ""))
 
 
-#stream in tweets
+###stream in tweets
 while (now >= Sys.time()){
   bbn <- searchTwitter(name, n = 100,
                        resultType = "recent", lang = "en") %>%
@@ -46,3 +46,4 @@ while (now >= Sys.time()){
               append = T, row.names = F)
 
 }
+
