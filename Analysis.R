@@ -39,8 +39,11 @@ for (i in 1:length(files)){
 a <- na.omit(files_n) %>%
   as.vector()
 
+a
+
 
 df <- do.call("rbind",lapply(a, read.csv))
+
 
 ##
 #temp data
