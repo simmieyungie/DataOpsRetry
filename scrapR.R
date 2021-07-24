@@ -19,7 +19,7 @@ setup_twitter_oauth(consumerKey,consumerSecret,accessToken,accessTokenSecret)
 
 
 #demo data
-name <- "#bbnaija"
+name <- "#bbnaija" #change
 
 #scrape
 # bbn <- searchTwitter(name, n = 1000,
