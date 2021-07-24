@@ -42,7 +42,7 @@ a <- na.omit(files_n) %>%
 
 df <- do.call("rbind",lapply(a, read.csv))
 
-#
+##
 #temp data
 #df <- read.csv("C:\\Users\\User\\Documents\\GitHub\\DataOpsRetry\\data\\bbnreunion 2021-06-29 23-39-26.csv")
 
