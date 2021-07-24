@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+
 ```
 
 ```{r echo = FALSE}
@@ -158,21 +160,21 @@ Getting the daily tweets trend by time;
               append = T, row.names = F)
 ```
 
-<!-- Getting the hourly trend to see which time of the day people tweeted the most; -->
-<!-- ```{r} -->
-<!-- #Find hrly trend -->
-<!-- #am pm  -->
-<!-- df %>%  -->
-<!--     separate(date, into = c("date", "time"), sep = " ") %>%  -->
-<!--     mutate(date = ymd(date)) %>%  -->
-<!--     mutate(hr = hour(hms(time))) %>%  -->
-<!--     mutate(tm = ifelse(hr < 12, "am", "pm")) %>% -->
-<!--     unite(time, hr, tm, sep = " ") %>%  -->
-<!--   group_by(time) %>%  -->
-<!--   count() %>%  -->
-<!--     write.csv("Analysis Files\\hr_trend.csv") -->
+Getting the hourly trend to see which time of the day people tweeted the most;
+```{r}
+#Find hrly trend
+#am pm
+df %>%
+    separate(date, into = c("date", "time"), sep = " ") %>%
+    mutate(date = ymd(date)) %>%
+    mutate(hr = hour(hms(time))) %>%
+    mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
+    unite(time, hr, tm, sep = " ") %>%
+  group_by(time) %>%
+  count() %>%
+    write.csv("Analysis Files\\hr_trend.csv")
 
-<!-- ``` -->
+```
 
 <!-- Getting the day of the week people tweeted the most; -->
 <!-- ```{r} -->
@@ -206,4 +208,8 @@ Getting the daily tweets trend by time;
 
 <!-- ``` -->
 
+
+```{r}
+knitr::purl("Analysis.Rmd", documentation = 0)
+```
 

@@ -30,7 +30,7 @@ files_n <- c()
 
 #iterate to fetch all files made today
 for (i in 1:length(files)){
-  if (str_detect(files[i], as.character(Sys.Date())) == TRUE){
+  if (str_detect(files[i], as.character(Sys.Date())) == F){
     files_n[i] = files[i]
   }
 }
@@ -41,6 +41,9 @@ a <- na.omit(files_n) %>%
 
 
 df <- do.call("rbind",lapply(a, read.csv))
+
+#temp data
+df <- read.csv("C:\\Users\\User\\Documents\\GitHub\\DataOpsRetry\\data\\bbnreunion 2021-06-29 23-39-26.csv")
 
 
 #Get the distinct tweets
@@ -129,12 +132,50 @@ df %>%
               col.names = !file.exists("Analysisdata/dailytrend.csv"),
               append = T, row.names = F)
 
+#Analysis for an hourly trend
+df %>%
+  separate(created, into = c("date", "time"), sep = " ") %>%
+  mutate(date = ymd(date)) %>%
+  mutate(hr = hour(hms(time))) %>%
+  mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
+  unite(time, hr, tm, sep = " ") %>%
+  group_by(time) %>%
+  count() %>% write.table(.,"Analysisdata/hrtrend.csv",
+                          sep = ",",
+                          col.names = !file.exists("Analysisdata/hrtrend.csv"),
+                          append = T, row.names = F)
 
 
 
+#Week day trend
+df %>%
+  separate(created, into = c("date", "time"), sep = " ") %>%
+  mutate(date = ymd(date)) %>%
+  mutate(day = weekdays(date)) %>%
+  group_by( day) %>%
+  count() %>%
+  write.table(.,"Analysisdata/day_tweets.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/day_tweets.csv"),
+              append = T, row.names = F)
 
-
-
-
-
+##Overall bing trend
+df %>%
+  mutate(tweet = removeURL2(text)) %>%
+  mutate(tweet = removeNumPunct(tweet)) %>%
+  mutate(tweet = tolower(tweet)) %>%
+  mutate(tweet = gsub("wil", "", tweet)) %>%
+  mutate(tweet = gsub("ben", "", tweet)) %>%
+  mutate(tweet = gsub("al", "", tweet)) %>%
+  mutate(tweet = gsub("ned", "", tweet)) %>%
+  unnest_tokens(word, tweet) %>%
+  anti_join(stop_words) %>%
+  inner_join(get_sentiments("bing")) %>%
+  separate(created, into = c("date", "time"), sep = " ") %>%
+  group_by(sentiment, date) %>%
+  count() %>%
+  write.table(.,"Analysisdata/bing_trend.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/bing_trend.csv"),
+              append = T, row.names = F)
 
