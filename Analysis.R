@@ -165,7 +165,7 @@ df %>%
 
 ##Overall bing trend
 df %>%
-  mutate(tweet = removeURL2(text)) %>%
+  mutate(tweet = removeURL2(tweet)) %>%
   mutate(tweet = removeNumPunct(tweet)) %>%
   mutate(tweet = tolower(tweet)) %>%
   mutate(tweet = gsub("wil", "", tweet)) %>%
@@ -178,6 +178,7 @@ df %>%
   separate(created, into = c("date", "time"), sep = " ") %>%
   group_by(sentiment, date) %>%
   count() %>%
+  filter(nchar(date) >0) %>% 
   write.table(.,"Analysisdata/bing_trend.csv",
               sep = ",",
               col.names = !file.exists("Analysisdata/bing_trend.csv"),
