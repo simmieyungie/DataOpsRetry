@@ -184,3 +184,6 @@ df %>%
               col.names = !file.exists("Analysisdata/bing_trend.csv"),
               append = T, row.names = F)
 
+
+#More
+
