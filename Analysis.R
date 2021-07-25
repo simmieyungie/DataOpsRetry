@@ -35,14 +35,15 @@ for (i in 1:length(files)){
   }
 }
 
-#drop nas
+#read in only the latest data
 a <- na.omit(files_n) %>%
-  as.vector()
+  as.vector() %>% 
+  sort() %>% 
+  tail(1)
 
-a
 
 #read in the earliest data
-
+a
 
 df <- do.call("rbind",lapply(a, read.csv))
 
@@ -56,6 +57,7 @@ df <- do.call("rbind",lapply(a, read.csv))
 df <- df %>%
   rename(tweet = text) %>%
   distinct(tweet, .keep_all = T) #This is to remove all duplicate tweets
+
 
 
 #Regular expression (Regex) function for extracting handles mentioned
@@ -129,6 +131,7 @@ df %>%
 df %>%
   separate(created, into = c("date", "time"), sep = " ") %>%
   mutate(date = ymd(date)) %>%
+  mutate(date = Sys.Date()) %>%
   mutate(hr = hour(hms(time))) %>%
   mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
   group_by(date) %>%
@@ -142,6 +145,7 @@ df %>%
 df %>%
   separate(created, into = c("date", "time"), sep = " ") %>%
   mutate(date = ymd(date)) %>%
+  mutate(date = Sys.Date()) %>%
   mutate(hr = hour(hms(time))) %>%
   mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
   unite(time, hr, tm, sep = " ") %>%
@@ -157,6 +161,7 @@ df %>%
 df %>%
   separate(created, into = c("date", "time"), sep = " ") %>%
   mutate(date = ymd(date)) %>%
+  mutate(date = Sys.Date()) %>%
   mutate(day = weekdays(date)) %>%
   group_by( day) %>%
   count() %>%
@@ -178,6 +183,7 @@ df %>%
   anti_join(stop_words) %>%
   inner_join(get_sentiments("bing")) %>%
   separate(created, into = c("date", "time"), sep = " ") %>%
+  mutate(date = Sys.Date()) %>%
   group_by(sentiment, date) %>%
   count() %>%
   filter(nchar(date) >0) %>% 
@@ -188,4 +194,3 @@ df %>%
 
 
 #More
-
