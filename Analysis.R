@@ -41,6 +41,8 @@ a <- na.omit(files_n) %>%
 
 a
 
+#read in the earliest data
+
 
 df <- do.call("rbind",lapply(a, read.csv))
 
