@@ -69,7 +69,14 @@
 "negative","2021-07-25",211
 "positive","2021-07-25",410
 "positive","Zarmie2",2
+<<<<<<< HEAD
 "negative",2021-07-25,38
 "positive",2021-07-25,59
 "negative",2021-07-25,38
 "positive",2021-07-25,59
+=======
+"negative","2021-07-25",229
+"positive","0",1
+"positive","2021-07-25",438
+"positive","Zarmie2",2
+>>>>>>> 75b8ea1112bf86c74c6831fb27867113166175ab
