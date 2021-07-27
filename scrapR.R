@@ -48,6 +48,17 @@ dataname <- gsub(":", "-",paste("data/","bbnaija ", as.character(Sys.time()), ".
 # }
 
 
+#Load in required libraries
+library(tidyverse)
+library(tidytext)
+# library(reshape2)
+# library(stringi)
+# library(stringi)
+# library(rmarkdown)
+# library(knitr)
+# library(eeptools)
+library(lubridate)
+
 #-----------------changes------------------------------------
 bbn <- searchTwitter(name, n = 5000,
                      resultType = "recent", lang = "en") %>%
