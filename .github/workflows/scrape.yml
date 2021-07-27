@@ -22,7 +22,7 @@ jobs:
     # Set-up R
     - name: Install packages
       run: |
-        R -e 'install.packages(c("twitteR", "magrittr"))'
+        R -e 'install.packages(c("twitteR", "magrittr", "tidyverse", "tidytext", "lubridate"))'
         
     # Run R script
     - name: Scrap
