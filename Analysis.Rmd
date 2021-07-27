@@ -176,37 +176,37 @@ df %>%
 
 ```
 
-<!-- Getting the day of the week people tweeted the most; -->
-<!-- ```{r} -->
-<!-- #Week day trend -->
-<!-- df %>%  -->
-<!-- separate(date, into = c("date", "time"), sep = " ") %>%  -->
-<!--   mutate(date = ymd(date)) %>%  -->
-<!--   mutate(day = weekdays(date)) %>%  -->
-<!--   group_by( day) %>%  -->
-<!--   count() %>% -->
-<!--   write.csv("Analysis Files\\day_tweets.csv") -->
-<!-- ``` -->
-<!-- Getting the overall bing trend for all tweets; -->
-<!-- ```{r} -->
-<!-- #Overall bing trend  -->
-<!-- df %>% -->
-<!--   mutate(tweet = removeURL2(tweet)) %>%  -->
-<!--   mutate(tweet = removeNumPunct(tweet)) %>%  -->
-<!--   mutate(tweet = tolower(tweet)) %>%  -->
-<!--   mutate(tweet = gsub("wil", "", tweet)) %>%  -->
-<!--   mutate(tweet = gsub("ben", "", tweet)) %>%  -->
-<!--   mutate(tweet = gsub("al", "", tweet)) %>%  -->
-<!--   mutate(tweet = gsub("ned", "", tweet)) %>%  -->
-<!--   unnest_tokens(word, tweet) %>%  -->
-<!--   anti_join(stop_words) %>%  -->
-<!--   inner_join(get_sentiments("bing")) %>%  -->
-<!--   separate(date, into = c("date", "time"), sep = " ") %>%  -->
-<!--   group_by(sentiment, date) %>%  -->
-<!--   count() %>% -->
-<!--   write.csv("Analysis Files\\bing_trend.csv") -->
+Getting the day of the week people tweeted the most;
+```{r}
+#Week day trend
+df %>%
+separate(date, into = c("date", "time"), sep = " ") %>%
+  mutate(date = ymd(date)) %>%
+  mutate(day = weekdays(date)) %>%
+  group_by( day) %>%
+  count() %>%
+  write.csv("Analysis Files\\day_tweets.csv")
+```
+Getting the overall bing trend for all tweets;
+```{r}
+#Overall bing trend
+df %>%
+  mutate(tweet = removeURL2(tweet)) %>%
+  mutate(tweet = removeNumPunct(tweet)) %>%
+  mutate(tweet = tolower(tweet)) %>%
+  mutate(tweet = gsub("wil", "", tweet)) %>%
+  mutate(tweet = gsub("ben", "", tweet)) %>%
+  mutate(tweet = gsub("al", "", tweet)) %>%
+  mutate(tweet = gsub("ned", "", tweet)) %>%
+  unnest_tokens(word, tweet) %>%
+  anti_join(stop_words) %>%
+  inner_join(get_sentiments("bing")) %>%
+  separate(date, into = c("date", "time"), sep = " ") %>%
+  group_by(sentiment, date) %>%
+  count() %>%
+  write.csv("Analysis Files\\bing_trend.csv")
 
-<!-- ``` -->
+```
 
 
 ```{r}
