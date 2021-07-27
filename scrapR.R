@@ -59,8 +59,9 @@ library(tidytext)
 # library(eeptools)
 library(lubridate)
 
+
 #-----------------changes------------------------------------
-bbn <- searchTwitter(name, n = 5000,
+bbn <- searchTwitter(name, n = 10000,
                      resultType = "recent", lang = "en") %>%
   twitteR::twListToDF()
 write.table(bbn,
