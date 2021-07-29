@@ -49,7 +49,7 @@ dataname <- gsub(":", "-",paste("data/","bbnaija ", as.character(Sys.time()), ".
 
 
 #Load in required libraries
-library(tidyverse)
+library(dplyr)
 library(tidytext)
 # library(reshape2)
 # library(stringi)
