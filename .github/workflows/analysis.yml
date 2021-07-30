@@ -4,11 +4,11 @@ name: AnalysisRun
 # Controls when the action will run.
 # Controls when the action will run.
 # test
-on:
+on: [pull]
   # Trigger the workflow on push or pull request,
   # but only for the main branch
  # schedule:
-  #  - cron:  '*/20 * * * *'
+#  - cron:  '*/20 * * * *'
 
 
 
