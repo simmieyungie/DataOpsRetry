@@ -49,7 +49,8 @@ dataname <- gsub(":", "-",paste("data/","bbnaija ", as.character(Sys.time()), ".
 
 
 #Load in required libraries
-library(tidyverse)
+library(tidyr)
+library(dplyr)
 library(tidytext)
 # library(reshape2)
 # library(stringi)
@@ -282,7 +283,7 @@ plyr::rbind.fill(lapply(all_contestants, function(x){
     mutate(tweet = gsub("rt", "", tweet)) %>% 
     mutate(tweet = gsub("hrefhtptwitercomdownloadandroid", "", tweet)) %>% 
     mutate(tweet = gsub("hrefhtpsmobiletwitercom", "", tweet)) %>% 
-    mutate(tweet = gsub("ğ", "", tweet)) %>% 
+    mutate(tweet = gsub("Ã°", "", tweet)) %>% 
     unnest_tokens(word, tweet) %>% 
     anti_join(stop_words) %>% 
     count(word, sort = T) %>% 
