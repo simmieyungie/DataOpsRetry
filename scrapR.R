@@ -256,7 +256,7 @@ plyr::rbind.fill(lapply(all_contestants, function(x){
     mutate(text = tolower(tweet)) %>% 
     unnest_tokens(word, text) %>% 
     anti_join(stop_words) %>% 
-    inner_join(get_sentiments("nrc")) %>% #get nrc sentiments for entire dataset
+     inner_join(nrc) %>% #get nrc sentiments for entire dataset
     group_by(sentiment) %>% #group
     count(word, sentiment, sort = T) %>% 
     ungroup() %>% 
