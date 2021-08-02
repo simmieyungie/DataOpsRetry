@@ -5,6 +5,7 @@ library(twitteR)
 #install.packages("tidyverse")
 #library(tidyverse)
 library(magrittr)
+library(plyr)
 #Setup
 consumerKey <- "U6JAH49FbjrBFzTFmcekc23yd"
 
