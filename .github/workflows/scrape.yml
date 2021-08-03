@@ -3,11 +3,11 @@ name: twitteR
 
 # Controls when the action will run.
 # Controls when the action will run.
-on: [push]
+on: #[push]
   # Trigger the workflow on push or pull request,
   # but only for the main branch
-  #schedule:
-  #- cron:  '0 * * * *'
+  schedule:
+  - cron:  '0 * * * *'
 
 jobs: 
   autoscrape:
