@@ -41,10 +41,10 @@ dataname <- gsub(":", "-",paste("data/","bbnaija ", as.character(Sys.time()), ".
 #   bbn <- searchTwitter(name, n = 5000,
 #                        resultType = "recent", lang = "en") %>%
 #     twitteR::twListToDF()
-#   write.table(bbn,
-#               dataname, sep = ",",
-#               col.names = !file.exists(dataname),
-#               append = T, row.names = F)
+#  # write.table(bbn,
+#   #            dataname, sep = ",",
+#    #           col.names = !file.exists(dataname),
+#     #          append = T, row.names = F)
 # 
 # }
 
