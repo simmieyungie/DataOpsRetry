@@ -1,6 +1,3 @@
-
-
-
 #Load in required libraries
 library(tidyverse)
 library(tidytext)
@@ -25,33 +22,32 @@ files
 # strsplit(files[1], split = " ")
 
 #Loop over each file, read and rbind each of them
-files_n <- c()
+#files_n <- c()
 
-
-#iterate to fetch all files made today
-for (i in 1:length(files)){
-  if (str_detect(files[i], as.character(Sys.Date())) == T){
-    files_n[i] = files[i]
-  }
-}
+# 
+# #iterate to fetch all files made today
+# for (i in 1:length(files)){
+#   if (str_detect(files[i], as.character(Sys.Date())) == T){
+#     files_n[i] = files[i]
+#   }
+# }
 
 #read in only the latest data
-a <- na.omit(files_n) %>%
-  as.vector() %>% 
-  sort() %>% 
-  tail(1)
+# a <- na.omit(files_n) %>%
+#   as.vector() %>% 
+#   sort() %>% 
+#   tail(1)
 
 
 #read in the earliest data
-a
+#a
 
-df <- do.call("rbind",lapply(a, read.csv))
+df <- do.call("rbind",lapply(files, read.csv))
 
 
 ##
 #temp data
 #df <- read.csv("C:\\Users\\User\\Documents\\GitHub\\DataOpsRetry\\data\\bbnreunion 2021-06-29 23-39-26.csv")
-
 
 #Get the distinct tweets
 df <- df %>%
@@ -193,4 +189,158 @@ df %>%
               append = T, row.names = F)
 
 
+#More
+
+
+#Contestants
+all_contestants <- scan("All_contestants.txt", character(), sep = ",")
+
+
+#Daily mentionsons
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>% 
+    #mutate(date = date) %>% 
+    separate(created, into = c("day", "contestant"), sep = " ") %>% 
+    mutate(day = ymd(day)) %>% 
+    group_by(day) %>% 
+    count(tweet) %>% 
+    summarise(n = sum(n))  %>% 
+    mutate(contestant = x) %>% 
+    drop_na()
+})) %>% 
+  write.table(.,"Analysisdata/Contestant_daily_mentions.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_daily_mentions.csv"),
+              append = T, row.names = F)
+# write.csv("Analysis Files\\Contestant_daily_mentions.csv")
+
+
+
+#Total menstions
+#Total Mentions of Contestants
+# plyr::rbind.fill(lapply(all_contestants, function(x){
+#   df[grepl(x, tolower(df$tweet)),] %>% 
+#     count(tweet) %>% 
+#     summarise(n = sum(n)) %>% 
+#     mutate(contestant = x)
+# }))
+
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>%
+    mutate(text = tolower(tweet)) %>% 
+    unnest_tokens(word, text) %>% 
+    anti_join(stop_words) %>% 
+    inner_join(nrc) %>% #get nrc sentiments for entire dataset
+    group_by(sentiment) %>% #group
+    count(word, sentiment, sort = T) %>% 
+    ungroup() %>% 
+    distinct(word, .keep_all = T) %>% 
+    group_by(sentiment) %>% 
+    summarise(n = sum(n)) %>% 
+    mutate(name = x) %>% 
+    drop_na()
+})) %>% 
+  write.table(.,"Analysisdata/Contestant_controversial.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_controversial.csv"),
+              append = T, row.names = F)
+
+
+
+
+#Top 20 words for word cloud
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>% 
+    mutate(tweet = removeURL2(tweet)) %>% 
+    mutate(tweet = removeNumPunct(tweet)) %>% 
+    mutate(tweet = tolower(tweet)) %>% 
+    mutate(tweet = gsub("hrefhtptwitercomdownloadiphone", "", tweet)) %>% 
+    mutate(tweet = gsub("rt", "", tweet)) %>% 
+    mutate(tweet = gsub("hrefhtptwitercomdownloadandroid", "", tweet)) %>% 
+    mutate(tweet = gsub("hrefhtpsmobiletwitercom", "", tweet)) %>% 
+    mutate(tweet = gsub("ð", "", tweet)) %>% 
+    unnest_tokens(word, tweet) %>% 
+    anti_join(stop_words) %>% 
+    count(word, sort = T) %>% 
+    distinct(word, .keep_all = T) %>% 
+    top_n(20) %>% 
+    mutate(contestant = x) %>% 
+    drop_na()
+})) %>% 
+  write.table(.,"Analysisdata/Contestant_topwords.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_topwords.csv"),
+              append = T, row.names = F) 
+
+
+#write.csv("Analysis Files\\Top_words_contst.csv")
+#Sentiment trend day of the week
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>% 
+    mutate(tweet = removeURL2(tweet)) %>% 
+    mutate(tweet = removeNumPunct(tweet)) %>% 
+    mutate(tweet = tolower(tweet)) %>% 
+    mutate(tweet = gsub("wil", "", tweet)) %>% 
+    mutate(tweet = gsub("ben", "", tweet)) %>% 
+    mutate(tweet = gsub("al", "", tweet)) %>% 
+    mutate(tweet = gsub("ned", "", tweet)) %>% 
+    unnest_tokens(word, tweet) %>% 
+    anti_join(stop_words) %>% 
+    inner_join(get_sentiments("bing")) %>% 
+    separate(created, into = c("date", "time"), sep = " ") %>% 
+    mutate(date = ymd(date)) %>% 
+    mutate(day = weekdays(date)) %>% 
+    group_by(sentiment, day) %>% 
+    count() %>% 
+    mutate(contestant = x) %>% 
+    drop_na()
+})) %>% 
+  write.table(.,"Analysisdata/Contestant_bingtrends.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_bingtrends.csv"),
+              append = T, row.names = F) 
+
+
+#handles
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>% 
+    mutate(tweet = removeURL2(tweet)) %>% 
+    mutate(tweet = removeNumPunct(tweet)) %>% 
+    mutate(tweet = tolower(tweet)) %>% 
+    mutate(tweet = gsub("wil", "", tweet)) %>% 
+    mutate(tweet = gsub("ben", "", tweet)) %>% 
+    mutate(tweet = gsub("al", "", tweet)) %>% 
+    mutate(tweet = gsub("ned", "", tweet)) %>% 
+    unnest_tokens(word, tweet) %>% 
+    anti_join(stop_words) %>% 
+    inner_join(get_sentiments("bing")) %>% 
+    separate(created, into = c("date", "time"), sep = " ") %>% 
+    mutate(date = ymd(date)) %>% 
+    mutate(hr = hour(hms(time))) %>% 
+    mutate(tm = ifelse(hr < 12, "am", "pm")) %>%
+    unite(time, hr, tm, sep = " ") %>% 
+    group_by(time) %>% 
+    count(sentiment) %>% 
+    mutate(contestant = x) %>% 
+    drop_na()
+})) %>% 
+  write.table(.,"Analysisdata/Contestant_binghour.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_binghour.csv"),
+              append = T, row.names = F) 
+
+
+#handles
+#Handles for contestants
+plyr::rbind.fill(lapply(all_contestants, function(x){
+  df[grepl(x, tolower(df$tweet)),] %>%
+    summarise(handles = users(tweet) %>% 
+                unlist() %>% 
+                unique() %>% 
+                length()) %>%
+    mutate(contestant = x)})) %>% 
+  write.table(.,"Analysisdata/Contestant_tophandles.csv",
+              sep = ",",
+              col.names = !file.exists("Analysisdata/Contestant_tophandles.csv"),
+              append = T, row.names = F) 
 #More
